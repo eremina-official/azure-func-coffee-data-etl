@@ -10,7 +10,6 @@ from src.db.insert_product_helpers import (
 )
 from src.models.product import Product
 from src.utils.constants import VALUES_LABELS, VALUES_IDS
-import os
 
 
 # Coffee categories to process

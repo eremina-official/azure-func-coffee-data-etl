@@ -5,10 +5,10 @@ from mysql.connector.cursor import MySQLCursor
 
 def get_connection():
     return mysql.connector.connect(
-        host=os.getenv("MYSQL_HOST"),
-        database=os.getenv("MYSQL_DATABASE"),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_PASSWORD"),
+        host=os.environ.get("MYSQL_HOST"),
+        database=os.environ.get("MYSQL_DATABASE"),
+        user=os.environ.get("MYSQL_USER"),
+        password=os.environ.get("MYSQL_PASSWORD"),
     )
 
 

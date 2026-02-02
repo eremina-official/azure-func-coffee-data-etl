@@ -6,4 +6,5 @@ azure-functions
 azure-storage-blob
 mysql-connector-python
 pydantic
-
+flake8
+black

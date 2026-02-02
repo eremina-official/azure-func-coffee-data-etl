@@ -15,6 +15,7 @@ from src.utils.constants import VALUES_LABELS, VALUES_IDS
 # Coffee categories to process
 COFFEE_CATEGORY_IDS = ("74035", "74033", "261120")
 
+
 def run_products_pipeline(raw_products, cursor):
     for raw in raw_products:
         if raw.get("category", {}).get("id") not in COFFEE_CATEGORY_IDS:
@@ -71,11 +72,8 @@ app = func.FunctionApp()
 #     connection=os.environ.get("AzureWebJobsStorage")
 # )
 
-@app.blob_trigger(
-    arg_name="blob",
-    path="jsonfiles",
-    connection="AzureWebJobsStorage"
-)
+
+@app.blob_trigger(arg_name="blob", path="jsonfiles", connection="AzureWebJobsStorage")
 def process_product_blob(blob: func.InputStream):
     logging.info(f"Processing blob: {blob.name}")
 

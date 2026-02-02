@@ -1,0 +1,12 @@
+# Product field names
+ID = "id"
+NAME = "name"
+CATEGORY_ID = "category_id"
+PUBLICATION_STATUS = "publication_status"
+CATEGORY = "category"
+DESCRIPTION = "description"
+IMAGES = "images"
+EAN = "ean"
+PARAMETERS = "parameters"
+VALUES_IDS = "valuesIds"
+VALUES_LABELS = "valuesLabels"

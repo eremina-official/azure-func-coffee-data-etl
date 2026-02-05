@@ -9,10 +9,10 @@ The project is a part of an **end-to-end data ETL pipeline** that lands raw JSON
 ### Project Architecture
 `Azure Blob Storage` ➜ `Azure Function App` ➜ `Azure Database for MySQL Flexible Server` ➜ `Power BI`
 
-- **Azure Blob Storage ➜** Landing zone for raw JSON coffee catalog files; each new blob fires the trigger that starts the ETL.
-- **Azure Function App ➜** Executes validation, transformation, and load steps with retries, logging, and schema enforcement before writing to MySQL.
-- **Azure Database for MySQL Flexible Server ➜** Durable store for the curated catalog, preserving referential integrity for downstream analytics.
-- **Power BI** consumes the curated tables, refreshes the semantic model on schedule, and presents merchandising dashboards to business users.
+- **Azure Blob Storage** - raw JSON coffee catalog files; each new blob fires the trigger that starts the ETL.
+- **Azure Function App** - executes validation, transformation, and load steps with and schema enforcement before writing to MySQL.
+- **Azure Database for MySQL Flexible Server** - storage for the curated catalog, preserving referential integrity for downstream analytics.
+- **Power BI** - consumes the curated tables, refreshes the semantic model on schedule and presents dashboards.
 
 
 ### Project Structure

@@ -48,19 +48,6 @@ class Product(BaseModel):
     #         raise ValueError("Product name cannot be empty")
     #     return v
 
-    # @field_validator("parameters", mode="before")
-    # @classmethod
-    # def ensure_parameters_list(cls, v):
-    #     # Ensure parameters is always a list
-    #     return v or []
-
-    # ---------- helper methods ----------
-
-    # def coffee_parameters(self) -> List[ProductParameter]:
-    #     """Return only parameters relevant for coffee analysis."""
-    #     excluded = {"weight_netto", "shipping_weight"}
-    #     return [p for p in self.parameters if p.parameter_id not in excluded]
-
     # ------------------- helper to extract EAN -------------------
     def extract_ean(self) -> Optional[str]:
         """

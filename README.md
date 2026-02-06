@@ -1,13 +1,13 @@
-## Azure Functions Coffee Data ETL
+## Azure Functions App for Coffee Data ETL project
 
 ### Overview
 
-This project is an **Azure Functions** application designed to transform and load json files with coffee data. It utilizes Azure services for data storage and processing, making it efficient and scalable. The function is triggered by new JSON blobs uploaded to a configured Azure Blob Storage container (Blob trigger).
+This project is an **Azure Functions** application designed to transform and load json files with coffee data. The function is triggered by new JSON blobs uploaded to a configured **Azure Blob Storage** container (Blob trigger).
 
-The project is a part of an **end-to-end data ETL pipeline** that lands raw JSON coffee catalog files in Azure Blob Storage, validates and normalizes them with Azure Functions + Pydantic, persists the golden dataset in MySQL, and keeps a Power BI data model refreshed for merchandising analytics.
+The project is a part of an **end-to-end data ETL pipeline** that lands raw JSON coffee catalog files in Azure Blob Storage, validates and normalizes them with Azure Functions + Pydantic, persists the golden dataset in MySQL, and keeps a Power BI data model refreshed for analytics.
 
 ### Project Architecture
-`Azure Blob Storage` ➜ `Azure Function App` ➜ `Azure Database for MySQL Flexible Server` ➜ `Power BI`
+![Screenshot of Project ETL Pipeline](/src/assets/azure-coffee-etl.png)
 
 - **Azure Blob Storage** - raw JSON coffee catalog files; each new blob fires the trigger that starts the ETL.
 - **Azure Function App** - executes validation, transformation, and load steps with and schema enforcement before writing to MySQL.

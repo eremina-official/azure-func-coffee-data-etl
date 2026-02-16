@@ -2,18 +2,93 @@
 
 ### Overview
 
-This project is an **Azure Functions** application designed to transform and load json files with coffee data. The function is triggered by new JSON blobs uploaded to a configured **Azure Blob Storage** container (Blob trigger).
+This project is an **Azure Functions** application which is part of an **end-to-end data ETL pipeline** for coffee data analysis. The function is triggered by new JSON blobs uploaded to a configured **Azure Blob Storage** container (Blob trigger). The app validates and normalizes data with Python + Pydantic and saves to the golden dataset in MySQL.
 
-The project is a part of an **end-to-end data ETL pipeline** that lands raw JSON coffee catalog files in Azure Blob Storage, validates and normalizes them with Azure Functions + Pydantic, persists the golden dataset in MySQL, and keeps a Power BI data model refreshed for analytics.
+===
 
 ### Project Architecture
 ![Screenshot of Project ETL Pipeline](/src/assets/azure-coffee-etl.png)
 
-- **Azure Blob Storage** - raw JSON coffee catalog files; each new blob fires the trigger that starts the ETL.
-- **Azure Function App** - executes validation, transformation, and load steps with and schema enforcement before writing to MySQL.
-- **Azure Database for MySQL Flexible Server** - storage for the curated catalog, preserving referential integrity for downstream analytics.
-- **Power BI** - consumes the curated tables, refreshes the semantic model on schedule and presents dashboards.
+**Azure Blob Storage**
 
+- All API responses stored as raw JSON coffee catalog files; each new blob fires the trigger that starts the ETL.
+- Raw files are immutable (corrections are applied downstream only).
+- Blob names are deterministic and include timestamps.
+
+**Azure Function App (Transformation & Load)**
+
+A blob-triggered Azure Function processes new files.
+
+***Why Azure Functions:***
+
+- Event-driven architecture
+- No need for long-running compute clusters (data do not arrive continuously)
+- Cost-efficient for sporadic ingestion (pay-per-use)
+
+Trade-off: Functions are not ideal for very large files or heavy parallelism, but our use case involves small JSON files and moderate throughput, making it a good fit.
+
+**Azure Database for MySQL Flexible Server**
+Structured, validated data is stored in MySQL using a normalized schema.
+
+***Why relational storage:***
+
+- Dictionary tables are populated once and reused.
+- Clear entity relationships.
+- Efficient filtering via indexing.
+- Better fit for analytical SQL exploration.
+
+**Power BI**
+
+Consumes the curated tables (views) and presents dashboards.
+
+===
+
+### Data Modeling Decisions
+
+The source API provides dynamic product attributes (brand, origin, roast type, etc.). Instead of flattening everything into a wide table, a **dictionary-driven relational model** was chosen.
+
+Core entities:
+- `products`
+- `categories`
+- `parameters`
+- `parameter_values`
+- `product_parameter_values` (many-to-many bridge)
+
+**Why This Design?**
+
+- ***Prevents duplication*** of attribute metadata
+- Allows ***multi-valued attributes*** per product
+- Enables flexible ***parameter-based filtering*** required for data exploration
+
+**Validation & Data Quality**
+
+Validation is enforced at transformation time using typed models (`Pydantic`).
+
+Rules Applied:
+- Required identifiers must be present
+- Non-coffee products filtered out
+- Measurement units standardized
+- Inconsistent parameters excluded
+
+===
+
+### Failure Handling & Observability
+
+- Structured logging for each transformation stage
+- Explicit error logging for validation failures
+- Avoid partial writes
+
+If a failure occurs mid-processing, the file can be safely reprocessed due to idempotent design.
+
+===
+
+### Pricing & Cost of Azure Services
+
+- **Azure Functions**: Pay-per-use model; costs depend on execution time and memory. For small, infrequent files, costs are minimal.
+- **Azure Blob Storage**: Costs based on storage and transactions. Raw JSON files are small, so storage costs are low.
+- **Azure Database for MySQL**: Costs depend on compute and storage. ***In the currect project cost of the MySQL server was the highest from all pipelines components. After initial setup, costs can be optimized by scaling down during low usage periods.***
+
+===
 
 ### Project Structure
 ```
@@ -30,6 +105,8 @@ The project is a part of an **end-to-end data ETL pipeline** that lands raw JSON
     └── utils/
         └── constants.py
 ```
+
+===
 
 ### Requirements
 - Python 3.x

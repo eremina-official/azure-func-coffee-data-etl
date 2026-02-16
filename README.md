@@ -4,44 +4,44 @@
 
 This project is an **Azure Functions** application which is part of an **end-to-end data ETL pipeline** for coffee data analysis. The function is triggered by new JSON blobs uploaded to a configured **Azure Blob Storage** container (Blob trigger). The app validates and normalizes data with Python + Pydantic and saves to the golden dataset in MySQL.
 
-===
+---
 
 ### Project Architecture
 ![Screenshot of Project ETL Pipeline](/src/assets/azure-coffee-etl.png)
 
-**Azure Blob Storage**
+### Azure Blob Storage
 
 - All API responses stored as raw JSON coffee catalog files; each new blob fires the trigger that starts the ETL.
-- Raw files are immutable (corrections are applied downstream only).
-- Blob names are deterministic and include timestamps.
+- Raw files are **immutable** (corrections are applied downstream only).
+- Blob names are deterministic and include **timestamps**.
 
-**Azure Function App (Transformation & Load)**
+### Azure Function App (Transformation & Load)
 
-A blob-triggered Azure Function processes new files.
+A **blob-triggered** Azure Function processes new files.
 
 ***Why Azure Functions:***
 
 - Event-driven architecture
 - No need for long-running compute clusters (data do not arrive continuously)
-- Cost-efficient for sporadic ingestion (pay-per-use)
+- **Cost-efficient** for sporadic ingestion (pay-per-use)
 
 Trade-off: Functions are not ideal for very large files or heavy parallelism, but our use case involves small JSON files and moderate throughput, making it a good fit.
 
-**Azure Database for MySQL Flexible Server**
-Structured, validated data is stored in MySQL using a normalized schema.
+### Azure Database for MySQL Flexible Server
+
+Structured, validated data is stored in MySQL using a normalized schema (**snowflake schema**)
 
 ***Why relational storage:***
 
-- Dictionary tables are populated once and reused.
 - Clear entity relationships.
-- Efficient filtering via indexing.
-- Better fit for analytical SQL exploration.
+- Dictionary tables are **populated once and reused**.
+- Efficient **filtering** via indexing makes it a better fit for analytical SQL exploration.
 
-**Power BI**
+### Power BI
 
 Consumes the curated tables (views) and presents dashboards.
 
-===
+---
 
 ### Data Modeling Decisions
 
@@ -56,9 +56,9 @@ Core entities:
 
 **Why This Design?**
 
-- ***Prevents duplication*** of attribute metadata
-- Allows ***multi-valued attributes*** per product
-- Enables flexible ***parameter-based filtering*** required for data exploration
+- **Prevents duplication** of attribute metadata
+- Allows **multi-valued attributes** per product
+- Enables flexible **parameter-based filtering** required for data exploration
 
 **Validation & Data Quality**
 
@@ -70,7 +70,7 @@ Rules Applied:
 - Measurement units standardized
 - Inconsistent parameters excluded
 
-===
+---
 
 ### Failure Handling & Observability
 
@@ -80,15 +80,15 @@ Rules Applied:
 
 If a failure occurs mid-processing, the file can be safely reprocessed due to idempotent design.
 
-===
+---
 
 ### Pricing & Cost of Azure Services
 
-- **Azure Functions**: Pay-per-use model; costs depend on execution time and memory. For small, infrequent files, costs are minimal.
+- **Azure Functions**: Pay-per-use model; costs depend on execution time and memory. For small, infrequent files costs are minimal.
 - **Azure Blob Storage**: Costs based on storage and transactions. Raw JSON files are small, so storage costs are low.
-- **Azure Database for MySQL**: Costs depend on compute and storage. ***In the currect project cost of the MySQL server was the highest from all pipelines components. After initial setup, costs can be optimized by scaling down during low usage periods.***
+- **Azure Database for MySQL**: Costs depend on compute and storage. ***In the currect project cost of the MySQL server was the highest from all pipeline components. After initial setup, costs were optimized by scaling down during low usage periods.***
 
-===
+---
 
 ### Project Structure
 ```
@@ -106,7 +106,7 @@ If a failure occurs mid-processing, the file can be safely reprocessed due to id
         └── constants.py
 ```
 
-===
+---
 
 ### Requirements
 - Python 3.x

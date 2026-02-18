@@ -6,6 +6,14 @@ This project is an **Azure Functions** application which is part of an **end-to-
 
 ---
 
+### Data Source
+
+Data is collected using the **Allegro REST API** `sale/products` endpoint, which provides listed product data ([documentation](https://developer.allegro.pl/documentation#tag/Products/operation/getFlatProductParametersUsingGET)).
+
+Due to restrictions on the `offers/listing` endpoint (as of January 2026 available only for verified applications), pricing data cannot be reliably collected via the REST API.
+
+---
+
 ### Project Architecture
 ![Screenshot of Project ETL Pipeline](/src/assets/azure-coffee-etl.png)
 
@@ -29,7 +37,7 @@ Trade-off: Functions are not ideal for very large files or heavy parallelism, bu
 
 ### Azure Database for MySQL Flexible Server
 
-Structured, validated data is stored in MySQL using a normalized schema (**snowflake schema**)
+Structured, validated data is stored in MySQL using a normalized schema (**snowflake schema**).
 
 ***Why relational storage:***
 
